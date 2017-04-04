@@ -36,4 +36,6 @@ final class Constants
     const CACHE_GROUPS = '_groups';
 
     const CACHE_DISCUSSES = '_discusses';
+
+    const CACHE_CREDENTIAL = '_credential';
 }

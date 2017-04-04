@@ -51,10 +51,26 @@ class Client
 
     protected static $loginQrImage = __DIR__ . '/_login.png';
 
+    public function __construct(SmartQQ $smartQQ = null)
+    {
+        if (is_null($smartQQ)) {
+            $smartQQ = new SmartQQ();
+        }
+        $this->smartQQ = $smartQQ;
+    }
+
+    /**
+     * 获取登录凭证
+     */
     public function login()
     {
-        $this->dispatcher->dispatch(Constants::EVENT_LOGIN);
-        $this->smartQQ->login(static::$loginQrImage);
+        //优先使用缓存信息
+        $credential = $this->cache->read(Constants::CACHE_CREDENTIAL, function(){
+            $this->dispatcher->dispatch(Constants::EVENT_LOGIN);
+            $credential = $this->smartQQ->login(static::$loginQrImage);
+            $this->smartQQ->setCredential($credential);
+        });
+        $this->smartQQ->setCredential($credential);
     }
 
     /**

@@ -5,6 +5,8 @@
  */
 namespace Slince\PHPQQClient\Console\Panel;
 
+use Slince\PHPQQClient\Console\Style;
+
 interface PanelInterface
 {
     /**
@@ -19,6 +21,11 @@ interface PanelInterface
      * @return mixed
      */
     public function getData();
+
+    /**
+     * @return Style
+     */
+    public function getStyle();
 
     /**
      * render view
