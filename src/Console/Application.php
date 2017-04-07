@@ -6,7 +6,9 @@
 namespace Slince\PHPQQClient\Console;
 
 use Slince\PHPQQClient\Console\Command\MainCommand;
+use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
+use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,6 +22,8 @@ class Application extends BaseApplication
      */
     const NAME = 'phpqqclient';
 
+    protected static $logo = 'PHP QQ Client';
+
     /**
      * @var Client
      */
@@ -29,6 +33,21 @@ class Application extends BaseApplication
      * @var Style
      */
     protected $style;
+
+    /**
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
+     * @var Loop
+     */
+    protected $loop;
 
     /**
      * 所有panel
@@ -42,30 +61,8 @@ class Application extends BaseApplication
         if (!is_null($client)) {
             $this->client = $client;
         }
-        $this->setup();
-    }
-
-    protected function setup()
-    {
-        $command = new MainCommand();
-        $this->add($command);
-        $this->setDefaultCommand($command, true);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function configureIO(InputInterface $input, OutputInterface $output)
-    {
-        parent::configureIO($input, $output);
-        $this->style = new Style($input, $output);
-    }
-
-    protected static function createCommands()
-    {
-        return [
-
-        ];
+        $this->setDefaultCommand('main');
+        $this->loop = new Loop();
     }
 
     /**
@@ -94,5 +91,33 @@ class Application extends BaseApplication
         $panel = new $panelClass($data, $this->style);
         $this->panels[] = $panel;
         return $panel;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function doRun(InputInterface $input, OutputInterface $output)
+    {
+        $this->style = new Style($input, $output);
+        $this->writeLogo();
+        parent::doRun($input, $output);
+        $this->loop->run(function(){
+            $commandName = fgets();
+        });
+    }
+
+    protected function writeLogo()
+    {
+        $this->output->writeln(static::$logo);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultCommands()
+    {
+        return array_merge(parent::getDefaultCommands(), [
+            new ShowFriendsCommand(),
+        ]);
     }
 }

@@ -1,15 +1,16 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: taosi
- * Date: 2017/4/6
- * Time: 23:07
+ * PHP QQ Client Library
+ * @author Tao <taosikai@yeah.net>
  */
-
 namespace Slince\PHPQQClient;
-
 
 class Loop
 {
-
+    public function run(callable $callable)
+    {
+        while (true) {
+            call_user_func($callable);
+        }
+    }
 }
