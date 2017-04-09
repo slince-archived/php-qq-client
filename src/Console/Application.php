@@ -5,12 +5,14 @@
  */
 namespace Slince\PHPQQClient\Console;
 
+use Slince\PHPQQClient\Console\Command\BootstrapCommand;
 use Slince\PHPQQClient\Console\Command\MainCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,6 +24,10 @@ class Application extends BaseApplication
      */
     const NAME = 'phpqqclient';
 
+    /**
+     * logo
+     * @var string
+     */
     protected static $logo = 'PHP QQ Client';
 
     /**
@@ -58,10 +64,11 @@ class Application extends BaseApplication
     public function __construct(Client $client = null)
     {
         parent::__construct(static::NAME);
-        if (!is_null($client)) {
-            $this->client = $client;
+        if (is_null($client)) {
+           $client = new Client();
         }
-        $this->setDefaultCommand('main');
+        $this->client = $client;
+        $this->setDefaultCommand('bootstrap', true);
         $this->loop = new Loop();
     }
 
@@ -93,16 +100,46 @@ class Application extends BaseApplication
         return $panel;
     }
 
+    public function run(InputInterface $input = null, OutputInterface $output = null)
+    {
+        if (is_null($input)) {
+            $input = new ArgvInput();
+            $input->setStream(fopen('php://stdin', 'r') ?: STDIN);
+        }
+        return parent::run($input, $output);
+    }
+
+    /**
+     * @return InputInterface
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @return OutputInterface
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->style = new Style($input, $output);
+        $this->input = $input;
+        $this->output = $output;
+        //write logo to console
         $this->writeLogo();
         parent::doRun($input, $output);
-        $this->loop->run(function(){
-            $commandName = fgets();
+        $this->loop->run(function() {
+            $commandName = fread($this->input->getStream(), 4096);
+            $command = $this->find($commandName);
+            $this->doRunCommand($command, $this->input, $this->output);
         });
     }
 
@@ -117,6 +154,7 @@ class Application extends BaseApplication
     protected function getDefaultCommands()
     {
         return array_merge(parent::getDefaultCommands(), [
+            new BootstrapCommand(),
             new ShowFriendsCommand(),
         ]);
     }

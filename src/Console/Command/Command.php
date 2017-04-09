@@ -14,23 +14,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class Command extends BaseCommand
 {
-    protected $input;
-
-    protected $output;
-
-    public function initialize(InputInterface $input, OutputInterface $output)
-    {
-        parent::initialize($input, $output);
-        $this->input = $input;
-        $this->output = $output;
-    }
-
     /**
      * @return mixed
      */
     public function getInput()
     {
-        return $this->input;
+        return $this->getApplication()->getInput();
     }
 
     /**
@@ -38,7 +27,7 @@ class Command extends BaseCommand
      */
     public function getOutput()
     {
-        return $this->output;
+        return $this->getApplication()->getInput();
     }
 
     /**

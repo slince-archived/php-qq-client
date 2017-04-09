@@ -8,11 +8,11 @@ namespace Slince\PHPQQClient\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MainCommand extends Command
+class BootstrapCommand extends Command
 {
     public function configure()
     {
-        $this->setName('phpqqclient')
+        $this->setName('bootstrap')
             ->setDescription("PHP QQ Client");
     }
 
@@ -20,8 +20,5 @@ class MainCommand extends Command
     {
         //获取登录凭证
         $this->getClient()->login();
-        while (true) {
-            $answer = $this->getHelper('question')->ans
-        }
     }
 }
