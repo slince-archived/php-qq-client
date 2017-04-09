@@ -22,7 +22,7 @@ class ShowFriendsCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $friends = $this->getClient()->getFriends();
-        $panel = $this->getApplication()->createPanel(ShowFriendsPanel::class, $friends);
+        $panel = $this->getClient()->createPanel(ShowFriendsPanel::class, $friends);
         $panel->render();
     }
 }

@@ -23,9 +23,9 @@
         "php": ">=5.5.9",
         "symfony/filesystem": "^2.7|^3.0",
         "symfony/console": "^2.7|^3.0",
-        "slince/smartqq": "^2.0",
         "slince/event": "^1.0",
-        "slince/cache": "^1.0"
+        "slince/cache": "^1.0",
+        "slince/smartqq": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.0"

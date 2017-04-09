@@ -45,13 +45,14 @@ class Client extends Application
      */
     protected $data = [];
 
-    protected static $loginQrImage = __DIR__ . '/_login.png';
+    protected static $loginQrImage;
 
     public function __construct(Configuration $configuration, SmartQQ $smartQQ = null)
     {
         parent::__construct($configuration);
         $this->cache = $this->configuration->getCache();
         $this->smartQQ = $smartQQ ?: new SmartQQ();
+        static::$loginQrImage = $this->configuration->getConfig('loginImage');
     }
 
     /**

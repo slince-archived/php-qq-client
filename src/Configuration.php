@@ -9,11 +9,25 @@ use Slince\Cache\FileCache;
 
 class Configuration
 {
+    /**
+     * @var array
+     */
     protected $configs = [];
 
     public function __construct($configs = [])
     {
-        $this->configs = $configs;
+        $this->configs = array_merge($this->getDefaultConfigs(), $configs);
+    }
+
+    /**
+     * 默认配置
+     * @return array
+     */
+    protected function getDefaultConfigs()
+    {
+        return [
+            'loginImage' => getcwd() . '/_login.png'
+        ];
     }
 
     public function readConfigFile($file)
@@ -49,7 +63,7 @@ class Configuration
      */
     public function getCache()
     {
-        return new FileCache($this->getConfig('cache.tmp.cache'));
+        return new FileCache($this->getConfig('cache.tmp.cache', 'tmp/cache'));
     }
 
     /**
