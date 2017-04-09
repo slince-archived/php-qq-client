@@ -5,15 +5,17 @@
  */
 namespace Slince\PHPQQClient\Console;
 
+use Slince\PHPQQClient\Configuration;
 use Slince\PHPQQClient\Console\Command\BootstrapCommand;
-use Slince\PHPQQClient\Console\Command\MainCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Application extends BaseApplication
@@ -56,20 +58,30 @@ class Application extends BaseApplication
     protected $loop;
 
     /**
+     * @var Configuration
+     */
+    protected $configuration;
+    /**
      * 所有panel
      * @var Panel[]
      */
     protected $panels = [];
 
-    public function __construct(Client $client = null)
+    public function __construct(Configuration $configuration = null, Client $client = null)
     {
         parent::__construct(static::NAME);
-        if (is_null($client)) {
-           $client = new Client();
-        }
-        $this->client = $client;
-        $this->setDefaultCommand('bootstrap', true);
+        $this->configuration = $configuration;
+        $this->client = $client ?: new Client($this->configuration);
         $this->loop = new Loop();
+        $this->setDefaultCommand('bootstrap', true);
+    }
+
+    /**
+     * @return Configuration
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
     }
 
     /**
@@ -133,7 +145,6 @@ class Application extends BaseApplication
         $this->style = new Style($input, $output);
         $this->input = $input;
         $this->output = $output;
-        //write logo to console
         $this->writeLogo();
         parent::doRun($input, $output);
         $this->loop->run(function() {
@@ -157,5 +168,15 @@ class Application extends BaseApplication
             new BootstrapCommand(),
             new ShowFriendsCommand(),
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultInputDefinition()
+    {
+        $inputDefinition =  parent::getDefaultInputDefinition();
+        $inputDefinition->addOption(new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, '配置文件'));
+        return $inputDefinition;
     }
 }

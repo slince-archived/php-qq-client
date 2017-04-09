@@ -6,6 +6,7 @@
 namespace Slince\PHPQQClient;
 
 use Slince\PHPQQClient\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
 
 class CommandUI
 {
@@ -15,8 +16,14 @@ class CommandUI
      */
     static function main()
     {
-        $application = new Application();
+        $input = new ArgvInput();
+        if (true === $input->hasParameterOption(array('--config'), true)) {
+            $configuration = Configuration::fromConfigFile($input->getParameterOption('--config'));
+        } else {
+            $configuration = new Configuration();
+        }
+        $application = new Application($configuration);
         $application->setAutoExit(true);
-        $application->run();
+        $application->run($input);
     }
 }

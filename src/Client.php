@@ -35,6 +35,11 @@ class Client
     protected $dispatcher;
 
     /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
      * @var CacheInterface
      */
     protected $cache;
@@ -51,12 +56,11 @@ class Client
 
     protected static $loginQrImage = __DIR__ . '/_login.png';
 
-    public function __construct(SmartQQ $smartQQ = null)
+    public function __construct(Configuration $configuration, SmartQQ $smartQQ = null)
     {
-        if (is_null($smartQQ)) {
-            $smartQQ = new SmartQQ();
-        }
-        $this->smartQQ = $smartQQ;
+        $this->configuration = $configuration;
+        $this->cache = $this->configuration->getCache();
+        $this->smartQQ = $smartQQ ?: new SmartQQ();
     }
 
     /**
