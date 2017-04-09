@@ -26,7 +26,8 @@ class Configuration
     protected function getDefaultConfigs()
     {
         return [
-            'loginImage' => getcwd() . '/_login.png'
+            'loginImage' => getcwd() . '/_login.png',
+            'prompt' => 'PHPQQ: '
         ];
     }
 
@@ -55,6 +56,15 @@ class Configuration
             $value = isset($this->configs[$key]) ? $this->configs[$key] : $default;
         }
         return $value;
+    }
+
+    /**
+     * 命令提示语
+     * @return string
+     */
+    public function getPrompt()
+    {
+        return $this->getConfig('prompt', 'PHPQQ: ');
     }
 
     /**

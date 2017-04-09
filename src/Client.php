@@ -17,6 +17,7 @@ use Slince\SmartQQ\Client as SmartQQ;
 use Slince\SmartQQ\Entity\Discuss;
 use Slince\SmartQQ\Entity\DiscussDetail;
 use Slince\SmartQQ\Entity\Group;
+use Slince\SmartQQ\EntityCollection;
 use Slince\SmartQQ\Exception\Code103ResponseException;
 use Slince\SmartQQ\Exception\ResponseException;
 use Slince\SmartQQ\Message\Response\FriendMessage;
@@ -63,12 +64,15 @@ class Client extends Application
         //优先使用缓存信息
         $credential = $this->cache->read(Constants::CACHE_CREDENTIAL, function(){
             $this->dispatcher->dispatch(Constants::EVENT_LOGIN);
-            $credential = $this->smartQQ->login(static::$loginQrImage);
-            $this->smartQQ->setCredential($credential);
+            return $this->smartQQ->login(static::$loginQrImage);
         });
         $this->smartQQ->setCredential($credential);
     }
 
+    /**
+     * 获取所有好友
+     * @return EntityCollection
+     */
     public function getFriends()
     {
         if (isset($this->data['friends'])) {

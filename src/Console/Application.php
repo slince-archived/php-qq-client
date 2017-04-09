@@ -13,10 +13,14 @@ use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
+use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Command\Command;
 
 class Application extends BaseApplication
 {
@@ -70,7 +74,7 @@ class Application extends BaseApplication
     public function __construct(Configuration $configuration)
     {
         parent::__construct(static::NAME);
-        $this->setDefaultCommand('bootstrap', true);
+        $this->setDefaultCommand('bootstrap');
         $this->configuration = $configuration;
         $this->loop = new Loop();
         $this->dispatcher = new Dispatcher();
@@ -107,18 +111,10 @@ class Application extends BaseApplication
      */
     public function createPanel($panelClass, $data)
     {
-        $panel = new $panelClass($data, $this->style);
+        $panel = new $panelClass($data);
+        $panel->setStyle($this->style);
         $this->panels[] = $panel;
         return $panel;
-    }
-
-    public function run(InputInterface $input = null, OutputInterface $output = null)
-    {
-        if (is_null($input)) {
-            $input = new ArgvInput();
-            $input->setStream(fopen('php://stdin', 'r') ?: STDIN);
-        }
-        return parent::run($input, $output);
     }
 
     /**
@@ -140,6 +136,16 @@ class Application extends BaseApplication
     /**
      * {@inheritdoc}
      */
+    public function run(InputInterface $input = null, OutputInterface $output = null)
+    {
+        $input = $input ?: new ArgvInput();
+        $input->setStream(fopen('php://stdin', 'r') ?: STDIN);
+        return parent::run($input, $output);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->style = new Style($input, $output);
@@ -148,15 +154,45 @@ class Application extends BaseApplication
         $this->writeLogo();
         parent::doRun($input, $output);
         $this->loop->run(function() {
-            $commandName = fread($this->input->getStream(), 4096);
-            $command = $this->find($commandName);
-            $this->doRunCommand($command, $this->input, $this->output);
+            $this->output->write($this->configuration->getPrompt());
+            $rawInput = fread($this->input->getStream(), 4096);
+            $rawInput = str_replace('\\', '\\\\', rtrim($rawInput, " \t\n\r\0\x0B;"));
+            $input = new StringInput($rawInput);
+            try {
+                $command = $this->findCommand($input);
+            } catch (CommandNotFoundException $exception) {
+                return false;
+            }
+            $command->run($input, $this->output);//共享输出流
+            return true;
         });
     }
 
     protected function writeLogo()
     {
         $this->output->writeln(static::$logo);
+    }
+
+    /**
+     * 判断命令存在
+     * @param StringInput $input
+     * @return bool
+     */
+    protected function hasCommand(StringInput $input)
+    {
+        $commandName = $input->getFirstArgument();
+        return $this->has($commandName);
+    }
+
+    /**
+     * 查找命令
+     * @param StringInput $input
+     * @return Command
+     */
+    protected function findCommand(StringInput $input)
+    {
+        $commandName = $input->getFirstArgument();
+        return $this->find($commandName);
     }
 
     /**
@@ -175,8 +211,8 @@ class Application extends BaseApplication
      */
     protected function getDefaultInputDefinition()
     {
-        $inputDefinition =  parent::getDefaultInputDefinition();
-        $inputDefinition->addOption(new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, '配置文件'));
-        return $inputDefinition;
+        $definition = parent::getDefaultInputDefinition();
+        $definition->addOption(new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, '配置文件'));
+        return $definition;
     }
 }
