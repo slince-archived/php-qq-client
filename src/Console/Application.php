@@ -5,6 +5,7 @@
  */
 namespace Slince\PHPQQClient\Console;
 
+use Slince\Event\Dispatcher;
 use Slince\PHPQQClient\Configuration;
 use Slince\PHPQQClient\Console\Command\BootstrapCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
@@ -13,7 +14,6 @@ use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,9 +33,9 @@ class Application extends BaseApplication
     protected static $logo = 'PHP QQ Client';
 
     /**
-     * @var Client
+     * @var Dispatcher
      */
-    protected $client;
+    protected $dispatcher;
 
     /**
      * @var Style
@@ -67,13 +67,13 @@ class Application extends BaseApplication
      */
     protected $panels = [];
 
-    public function __construct(Configuration $configuration = null, Client $client = null)
+    public function __construct(Configuration $configuration)
     {
         parent::__construct(static::NAME);
-        $this->configuration = $configuration;
-        $this->client = $client ?: new Client($this->configuration);
-        $this->loop = new Loop();
         $this->setDefaultCommand('bootstrap', true);
+        $this->configuration = $configuration;
+        $this->loop = new Loop();
+        $this->dispatcher = new Dispatcher();
     }
 
     /**
@@ -85,11 +85,11 @@ class Application extends BaseApplication
     }
 
     /**
-     * @return Client
+     * @return Dispatcher
      */
-    public function getClient()
+    public function getDispatcher()
     {
-        return $this->client;
+        return $this->dispatcher;
     }
 
     /**

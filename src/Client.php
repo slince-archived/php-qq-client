@@ -8,6 +8,7 @@ namespace Slince\PHPQQClient;
 use Slince\Cache\CacheInterface;
 use Slince\Event\Dispatcher;
 use Slince\Event\SubscriberInterface;
+use Slince\PHPQQClient\Console\Application;
 use Slince\PHPQQClient\Event\ReceivedDiscussMessageEvent;
 use Slince\PHPQQClient\Event\ReceivedGroupMessageEvent;
 use Slince\PHPQQClient\Event\ReceivedMessageEvent;
@@ -22,22 +23,12 @@ use Slince\SmartQQ\Message\Response\FriendMessage;
 use Slince\SmartQQ\Message\Response\GroupMessage;
 use Slince\SmartQQ\Message\Response\DiscussMessage;
 
-class Client
+class Client extends Application
 {
     /**
      * @var SmartQQ
      */
     protected $smartQQ;
-
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * @var Configuration
-     */
-    protected $configuration;
 
     /**
      * @var CacheInterface
@@ -58,7 +49,7 @@ class Client
 
     public function __construct(Configuration $configuration, SmartQQ $smartQQ = null)
     {
-        $this->configuration = $configuration;
+        parent::__construct($configuration);
         $this->cache = $this->configuration->getCache();
         $this->smartQQ = $smartQQ ?: new SmartQQ();
     }
@@ -75,14 +66,6 @@ class Client
             $this->smartQQ->setCredential($credential);
         });
         $this->smartQQ->setCredential($credential);
-    }
-
-    /**
-     * @return Dispatcher
-     */
-    public function getDispatcher()
-    {
-        return $this->dispatcher;
     }
 
     public function getFriends()
