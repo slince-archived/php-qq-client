@@ -160,11 +160,10 @@ class Application extends BaseApplication
             $input = new StringInput($rawInput);
             try {
                 $command = $this->findCommand($input);
+                return $this->runCommand($command, $input, $this->output);
             } catch (CommandNotFoundException $exception) {
                 return false;
             }
-            $command->run($input, $this->output);//共享输出流
-            return true;
         });
     }
 
@@ -193,6 +192,23 @@ class Application extends BaseApplication
     {
         $commandName = $input->getFirstArgument();
         return $this->find($commandName);
+    }
+
+    /**
+     * 执行内部命令
+     * @param Command $command
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int
+     */
+    protected function runCommand(Command $command, InputInterface $input, OutputInterface $output)
+    {
+        if ($input->hasParameterOption(['--help', '-h'], true) === true) {
+            $helpCommand = $this->get('help');
+            $helpCommand->setCommand($command);
+            $command = $helpCommand;
+        }
+        return $command->run($input, $output);
     }
 
     /**
