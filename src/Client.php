@@ -16,7 +16,9 @@ use Slince\PHPQQClient\Exception\RuntimeException;
 use Slince\SmartQQ\Client as SmartQQ;
 use Slince\SmartQQ\Entity\Discuss;
 use Slince\SmartQQ\Entity\DiscussDetail;
+use Slince\SmartQQ\Entity\Friend;
 use Slince\SmartQQ\Entity\Group;
+use Slince\SmartQQ\Entity\Profile;
 use Slince\SmartQQ\EntityCollection;
 use Slince\SmartQQ\Exception\Code103ResponseException;
 use Slince\SmartQQ\Exception\ResponseException;
@@ -110,6 +112,36 @@ class Client extends Application
             });
         });
         return $this->data['discusses'];
+    }
+
+    /**
+     * 获取当前用户的资料
+     * @return Profile
+     */
+    public function getCurrentUserProfile()
+    {
+        if (isset($this->data['currentUser'])) {
+            return $this->data['currentUser'];
+        }
+        return $this->data['currentUser'] = $this->wrapRequest(function(){
+            return $this->smartQQ->getCurrentUserInfo();
+        });
+    }
+
+    /**
+     * 获取好友信息
+     * @param Friend $friend
+     * @return Friend
+     */
+    public function getFriendDetail(Friend $friend)
+    {
+        $key = 'friend' . $friend->getUin();
+        if (isset($this->data[$key])) {
+            return $this->data[$key];
+        }
+        return $this->data[$key] = $this->wrapRequest(function() use ($friend){
+            return $this->smartQQ->getFriendDetail($friend);
+        });
     }
 
     /**

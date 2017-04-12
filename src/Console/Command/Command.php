@@ -26,7 +26,7 @@ class Command extends BaseCommand
      */
     public function getOutput()
     {
-        return $this->getClient()->getInput();
+        return $this->getClient()->getOutput();
     }
 
     /**

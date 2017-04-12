@@ -5,15 +5,19 @@
  */
 namespace Slince\PHPQQClient\Console;
 
+use Slince\Di\Container;
 use Slince\Event\Dispatcher;
 use Slince\PHPQQClient\Configuration;
 use Slince\PHPQQClient\Console\Command\BootstrapCommand;
+use Slince\PHPQQClient\Console\Command\ShowFriendCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
+use Slince\PHPQQClient\Console\Command\ShowMeCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,6 +39,11 @@ class Application extends BaseApplication
      * @var string
      */
     protected static $logo = 'PHP QQ Client';
+
+    /**
+     * @var Container
+     */
+    protected $container;
 
     /**
      * @var Dispatcher
@@ -65,6 +74,12 @@ class Application extends BaseApplication
      * @var Configuration
      */
     protected $configuration;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
     /**
      * 所有panel
      * @var Panel[]
@@ -78,6 +93,7 @@ class Application extends BaseApplication
         $this->configuration = $configuration;
         $this->loop = new Loop();
         $this->dispatcher = new Dispatcher();
+        $this->container = new Container();
     }
 
     /**
@@ -106,12 +122,12 @@ class Application extends BaseApplication
 
     /**
      * @param $panelClass
-     * @param $data
+     * @param array $arguments
      * @return mixed
      */
-    public function createPanel($panelClass, $data)
+    public function createPanel($panelClass, array $arguments = [])
     {
-        $panel = new $panelClass($data);
+        $panel = $this->container->get($panelClass, $arguments);
         $panel->setStyle($this->style);
         $this->panels[] = $panel;
         return $panel;
@@ -149,6 +165,7 @@ class Application extends BaseApplication
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->style = new Style($input, $output);
+        $this->logger = new Logger($output);
         $this->input = $input;
         $this->output = $output;
         $this->writeLogo();
@@ -162,6 +179,7 @@ class Application extends BaseApplication
                 $command = $this->findCommand($input);
                 return $this->runCommand($command, $input, $this->output);
             } catch (CommandNotFoundException $exception) {
+                $this->logger->error($exception->getMessage());
                 return false;
             }
         });
@@ -208,7 +226,13 @@ class Application extends BaseApplication
             $helpCommand->setCommand($command);
             $command = $helpCommand;
         }
-        return $command->run($input, $output);
+        try {
+            $statusCode = $command->run($input, $output);
+        } catch (RuntimeException $exception) {
+            $this->logger->error($exception->getMessage());
+            $statusCode = 1;
+        }
+        return $statusCode;
     }
 
     /**
@@ -219,6 +243,8 @@ class Application extends BaseApplication
         return array_merge(parent::getDefaultCommands(), [
             new BootstrapCommand(),
             new ShowFriendsCommand(),
+            new ShowMeCommand(),
+            new ShowFriendCommand()
         ]);
     }
 
