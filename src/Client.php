@@ -139,9 +139,19 @@ class Client extends Application
         if (isset($this->data[$key])) {
             return $this->data[$key];
         }
-        return $this->data[$key] = $this->wrapRequest(function() use ($friend){
+        //获取基本消息
+        $detail = $this->wrapRequest(function() use ($friend){
             return $this->smartQQ->getFriendDetail($friend);
         });
+        //获取好友qq号，腾讯已经封禁了此接口
+        /* $detail->setAccount($this->wrapRequest(function() use($friend){
+            return $this->smartQQ->getFriendQQ($friend);
+        }));*/
+        //获取好友lnick
+        $detail->setLnick($this->wrapRequest(function() use($friend){
+            return $this->smartQQ->getFriendLnick($friend);
+        }));
+        return $this->data[$key] = $detail;
     }
 
     /**

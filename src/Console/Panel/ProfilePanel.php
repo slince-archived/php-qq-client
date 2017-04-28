@@ -6,6 +6,7 @@
 namespace Slince\PHPQQClient\Console\Panel;
 
 use Slince\SmartQQ\Entity\Profile;
+use Symfony\Component\Console\Helper\TableCell;
 
 class ProfilePanel extends Panel
 {
@@ -20,16 +21,18 @@ class ProfilePanel extends Panel
         $age = ceil((time() - strtotime("{$birthday->getYear()}-{$birthday->getMonth()}-{$birthday->getDay()}"))
             / (86400 * 365));
         $tableRows = [
-            [$profile->getNick(), $age . '岁' . ' '
-                .  $profile->getCountry() . $profile->getProvince() . $profile->getCity()
-            ],
-            ['QQ', $profile->getAccount()],
-            ['手机号', $profile->getMobile()],
+            ['昵称', $profile->getNick()],
+            ['生日', "{$birthday->getYear()}/{$birthday->getMonth()}/{$birthday->getDay()} {$age}岁"],
+            ['性别', $profile->getGender() == 'male' ? '男' : '女'],
+            $profile->getAccount() ? ['QQ', $profile->getAccount()] : false,
+            ['国家', $profile->getCountry()],
+            ['省份', $profile->getProvince()],
+            ['城市', $profile->getCity()],
             ['邮箱', $profile->getEmail()],
-            ['签名', $profile->getLnick()],
-            ['VIP等级', $profile->getVipInfo()]
+            ['VIP等级', $profile->getVipInfo()],
+            ['个性签名', $profile->getLnick()],
         ];
-        return [[], $tableRows];
+        return [[], array_filter($tableRows)];
     }
 
     /**
