@@ -25,6 +25,11 @@ abstract class Panel implements PanelInterface
         $this->data = $data;
     }
 
+    public function __toString()
+    {
+        return $this->render();
+    }
+
     /**
      * @inheritdoc
      */

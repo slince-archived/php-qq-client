@@ -22,6 +22,7 @@ use Slince\SmartQQ\Entity\Profile;
 use Slince\SmartQQ\EntityCollection;
 use Slince\SmartQQ\Exception\Code103ResponseException;
 use Slince\SmartQQ\Exception\ResponseException;
+use Slince\SmartQQ\Message\Request\Message;
 use Slince\SmartQQ\Message\Response\FriendMessage;
 use Slince\SmartQQ\Message\Response\GroupMessage;
 use Slince\SmartQQ\Message\Response\DiscussMessage;
@@ -187,6 +188,18 @@ class Client extends Application
     }
 
     /**
+     * Sends a message
+     * @param Message $message
+     * @return false|mixed
+     */
+    public function sendMessage(Message $message)
+    {
+        return $this->wrapRequest(function() use($message){
+            return $this->smartQQ->sendMessage($message);
+        });
+    }
+
+    /**
      * 监听消息
      * @param SubscriberInterface|null $subscriber
      */
@@ -223,10 +236,6 @@ class Client extends Application
             }
             $this->dispatcher->dispatch($event->getName(), $event);
         }
-    }
-
-    protected function setup()
-    {
     }
 
     /**

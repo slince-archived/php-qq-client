@@ -5,7 +5,15 @@
  */
 namespace Slince\PHPQQClient;
 
-class NotificationManager
+use Slince\Event\SubscriberInterface;
+
+class NotificationManager implements SubscriberInterface
 {
-    
+    public function getEvents()
+    {
+        return [
+
+        ];
+    }
+
 }

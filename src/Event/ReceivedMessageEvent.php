@@ -32,4 +32,20 @@ class ReceivedMessageEvent extends Event
         $this->sender = $sender;
         parent::__construct(static::EVENT_NAME, $subject);
     }
+
+    /**
+     * @return Message
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * @return DiscussMember|Friend|GroupMember
+     */
+    public function getSender()
+    {
+        return $this->sender;
+    }
 }
