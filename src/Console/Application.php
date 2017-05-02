@@ -10,9 +10,13 @@ use Slince\Event\Dispatcher;
 use Slince\PHPQQClient\Configuration;
 use Slince\PHPQQClient\Console\Command\BootstrapCommand;
 use Slince\PHPQQClient\Console\Command\ChatCommand;
+use Slince\PHPQQClient\Console\Command\ListDiscussMembersCommand;
+use Slince\PHPQQClient\Console\Command\ListGroupMembersCommand;
+use Slince\PHPQQClient\Console\Command\ShowCategoriesCommand;
+use Slince\PHPQQClient\Console\Command\ListDiscussesCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendCommand;
-use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
-use Slince\PHPQQClient\Console\Command\ShowGroupsCommand;
+use Slince\PHPQQClient\Console\Command\ListFriendsCommand;
+use Slince\PHPQQClient\Console\Command\ListGroupsCommand;
 use Slince\PHPQQClient\Console\Command\ShowMeCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Loop;
@@ -194,6 +198,7 @@ class Application extends BaseApplication
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->style = new Style($input, $output);
+        Panel::setStyle($this->style);
         $this->logger = new Logger($output);
         $this->input = $input;
         $this->output = $output;
@@ -270,8 +275,12 @@ class Application extends BaseApplication
     {
         return array_merge(parent::getDefaultCommands(), [
             new BootstrapCommand(),
-            new ShowFriendsCommand(),
-            new ShowGroupsCommand(),
+            new ListFriendsCommand(),
+            new ListGroupsCommand(),
+            new ListDiscussesCommand(),
+            new ListGroupMembersCommand(),
+            new ListDiscussMembersCommand(),
+            new ShowCategoriesCommand(),
             new ShowMeCommand(),
             new ShowFriendCommand(),
             new ChatCommand(),

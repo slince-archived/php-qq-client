@@ -41,16 +41,14 @@ class GroupsPanel extends Panel
      */
     protected function makeTable()
     {
-        $headers = ['索引', '群名称', '群备注', '群主', '群等级'];
+        $headers = ['索引', '群名称', '群备注'];
         $groupDetails = $this->getGroupDetails();
         $rows = $this->getGroups()->map(function(Group $group, $index) use ($groupDetails){
             $groupDetail = isset($groupDetails[$group->getId()]) ? $groupDetails[$group->getId()] : false;
             return [
                 ++ $index,
                 $group->getName(),
-                $group->getMarkName(),
-                $groupDetail ? $groupDetail->getOwner() : '',
-                $groupDetail ? $groupDetail->getLevel() : '',
+                $group->getMarkName()
             ];
         })->toArray();
         return [$headers, $rows];

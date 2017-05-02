@@ -21,7 +21,7 @@ class FriendsPanel extends Panel
     /**
      * @return array
      */
-    protected function makeTable()
+    protected function makeTable2()
     {
         $friends = $this->getFriends()->groupBy(function(Friend $friend){
             return $friend->getCategory()->getName();
@@ -36,6 +36,20 @@ class FriendsPanel extends Panel
             }
             $rows[] = $row;
         }
+        return [$headers, $rows];
+    }
+
+    protected function makeTable()
+    {
+        $headers = ['好友', '昵称', '分类', 'VIP等级'];
+        $rows = $this->getFriends()->map(function(Friend $friend){
+            return [
+                $friend->getMarkName() ?: $friend->getNick(),
+                $friend->getNick(),
+                $friend->getCategory()->getName(),
+                $friend->getVipLevel()
+            ];
+        })->toArray();
         return [$headers, $rows];
     }
 

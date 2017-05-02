@@ -18,4 +18,12 @@ class Style extends SymfonyStyle
         $table->render();
         $this->newLine();
     }
+
+    /**
+     * {@inheritdoc
+     */
+    public function table(array $headers, array $rows)
+    {
+        $this->normalTable($headers, $rows);
+    }
 }

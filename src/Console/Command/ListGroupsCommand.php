@@ -11,11 +11,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ShowGroupsCommand extends Command
+class ListGroupsCommand extends Command
 {
     public function configure()
     {
-        $this->setName('show-groups');
+        $this->setName('list-groups');
         $this->addOption('names', null, InputOption::VALUE_OPTIONAL, '按群名称或者备注筛选，多个值使用点号分离');
     }
 
@@ -33,11 +33,7 @@ class ShowGroupsCommand extends Command
                     || in_array($group->getMarkName(), $names);
             });
         }
-        $groupsDetails = [];
-        foreach ($groups as $group) {
-            $groupsDetails[$group->getId()] = $this->getClient()->getGroupsDetail($group);
-        }
-        $panel = $this->getClient()->createPanel(GroupsPanel::class, [$groups, $groupsDetails]);
+        $panel = $this->getClient()->createPanel(GroupsPanel::class, [$groups, []]);
         $panel->render();
     }
 }

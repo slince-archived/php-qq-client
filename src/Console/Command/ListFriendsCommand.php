@@ -11,11 +11,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ShowFriendsCommand extends Command
+class ListFriendsCommand extends Command
 {
     public function configure()
     {
-        $this->setName('show-friends');
+        $this->setName('list-friends');
         $this->addOption('categories', null, InputOption::VALUE_OPTIONAL, '按分类筛选，多个分类使用点号点号分离');
         $this->addOption('names', null, InputOption::VALUE_OPTIONAL, '按昵称或者备注筛选，多个值使用点号分离');
     }

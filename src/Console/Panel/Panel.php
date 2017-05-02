@@ -18,7 +18,7 @@ abstract class Panel implements PanelInterface
     /**
      * @var Style
      */
-    protected $style;
+    protected static $style;
 
     public function __construct($data)
     {
@@ -49,16 +49,16 @@ abstract class Panel implements PanelInterface
     /**
      * {@inheritdoc}
      */
-    public function getStyle()
+    public static function getStyle()
     {
-        return $this->style;
+        return static::$style;
     }
 
     /**
      * @param Style $style
      */
-    public function setStyle($style)
+    public static function setStyle($style)
     {
-        $this->style = $style;
+        static::$style  = $style;
     }
 }

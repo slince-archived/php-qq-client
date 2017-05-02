@@ -23,11 +23,6 @@ interface PanelInterface
     public function getData();
 
     /**
-     * @return Style
-     */
-    public function getStyle();
-
-    /**
      * render view
      * @return string
      */

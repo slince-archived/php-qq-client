@@ -180,7 +180,7 @@ class Client extends Application
      * @param Discuss $discuss
      * @return DiscussDetail
      */
-    public function getDiscussDetails(Discuss $discuss)
+    public function getDiscussDetail(Discuss $discuss)
     {
         static $discussDetails = [];
         if (isset($discussDetails[$discuss->getId()])) {
