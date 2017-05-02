@@ -23,6 +23,7 @@ use Slince\SmartQQ\EntityCollection;
 use Slince\SmartQQ\Exception\Code103ResponseException;
 use Slince\SmartQQ\Exception\ResponseException;
 use Slince\SmartQQ\Message\Request\Message;
+use Slince\SmartQQ\Message\Response\Message as ResponseMessage;
 use Slince\SmartQQ\Message\Response\FriendMessage;
 use Slince\SmartQQ\Message\Response\GroupMessage;
 use Slince\SmartQQ\Message\Response\DiscussMessage;
@@ -206,8 +207,9 @@ class Client extends Application
     /**
      * 监听消息
      * @param SubscriberInterface|null $subscriber
+     * @return ResponseMessage[]
      */
-    public function listen(SubscriberInterface $subscriber = null)
+    public function polling(SubscriberInterface $subscriber = null)
     {
         if (!is_null($subscriber)) {
             $this->dispatcher->addSubscriber($subscriber);
@@ -240,6 +242,7 @@ class Client extends Application
             }
             $this->dispatcher->dispatch($event->getName(), $event);
         }
+        return $messages;
     }
 
     /**
