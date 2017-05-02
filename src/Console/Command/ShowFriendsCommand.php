@@ -5,7 +5,7 @@
  */
 namespace Slince\PHPQQClient\Console\Command;
 
-use Slince\PHPQQClient\Console\Panel\ShowFriendsPanel;
+use Slince\PHPQQClient\Console\Panel\FriendsPanel;
 use Slince\SmartQQ\Entity\Friend;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -41,7 +41,7 @@ class ShowFriendsCommand extends Command
                     || in_array($friend->getMarkName(), $names);
             });
         }
-        $panel = $this->getClient()->createPanel(ShowFriendsPanel::class, [$friends]);
+        $panel = $this->getClient()->createPanel(FriendsPanel::class, [$friends]);
         $panel->render();
     }
 }

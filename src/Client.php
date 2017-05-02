@@ -89,6 +89,10 @@ class Client extends Application
         return $this->data['friends'];
     }
 
+    /**
+     * 获取所有群
+     * @return EntityCollection
+     */
     public function getGroups()
     {
         if (isset($this->data['groups'])) {

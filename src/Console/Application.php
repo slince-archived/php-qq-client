@@ -12,6 +12,7 @@ use Slince\PHPQQClient\Console\Command\BootstrapCommand;
 use Slince\PHPQQClient\Console\Command\ChatCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendsCommand;
+use Slince\PHPQQClient\Console\Command\ShowGroupsCommand;
 use Slince\PHPQQClient\Console\Command\ShowMeCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Loop;
@@ -270,6 +271,7 @@ class Application extends BaseApplication
         return array_merge(parent::getDefaultCommands(), [
             new BootstrapCommand(),
             new ShowFriendsCommand(),
+            new ShowGroupsCommand(),
             new ShowMeCommand(),
             new ShowFriendCommand(),
             new ChatCommand(),

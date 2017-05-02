@@ -8,7 +8,7 @@ namespace Slince\PHPQQClient\Console\Panel;
 use Slince\SmartQQ\Entity\Friend;
 use Slince\SmartQQ\EntityCollection;
 
-class ShowFriendsPanel extends Panel
+class FriendsPanel extends Panel
 {
     /**
      * @return EntityCollection
