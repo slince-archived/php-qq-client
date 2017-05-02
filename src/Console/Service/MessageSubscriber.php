@@ -1,11 +1,8 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: ZMoffice
- * Date: 2017/5/2
- * Time: 17:56
+ * PHP QQ Client Library
+ * @author Tao <taosikai@yeah.net>
  */
-
 namespace Slince\PHPQQClient\Console\Command;
 
 use Slince\Event\SubscriberInterface;

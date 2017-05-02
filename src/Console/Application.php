@@ -12,6 +12,8 @@ use Slince\PHPQQClient\Console\Command\BootstrapCommand;
 use Slince\PHPQQClient\Console\Command\ChatCommand;
 use Slince\PHPQQClient\Console\Command\ListDiscussMembersCommand;
 use Slince\PHPQQClient\Console\Command\ListGroupMembersCommand;
+use Slince\PHPQQClient\Console\Command\Service;
+use Slince\PHPQQClient\Console\Command\ServiceInterface;
 use Slince\PHPQQClient\Console\Command\ShowCategoriesCommand;
 use Slince\PHPQQClient\Console\Command\ListDiscussesCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendCommand;
@@ -19,6 +21,7 @@ use Slince\PHPQQClient\Console\Command\ListFriendsCommand;
 use Slince\PHPQQClient\Console\Command\ListGroupsCommand;
 use Slince\PHPQQClient\Console\Command\ShowMeCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
+use Slince\PHPQQClient\Console\Service\MessageService;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
@@ -86,6 +89,12 @@ class Application extends BaseApplication
      */
     protected $logger;
 
+    /**
+     * backend services
+     * @var array
+     */
+    protected $services = [];
+
     public function __construct(Configuration $configuration)
     {
         parent::__construct(static::NAME);
@@ -121,18 +130,6 @@ class Application extends BaseApplication
     }
 
     /**
-     * @param $panelClass
-     * @param array $arguments
-     * @return mixed
-     */
-    public function createPanel($panelClass, array $arguments = [])
-    {
-        $panel = $this->container->get($panelClass, $arguments);
-        $panel->setStyle($this->style);
-        return $panel;
-    }
-
-    /**
      * @return InputInterface
      */
     public function getInput()
@@ -148,9 +145,9 @@ class Application extends BaseApplication
         return $this->output;
     }
 
-    public function registerService()
+    public function registerService(ServiceInterface $service)
     {
-
+        $this->services[$service->getName()] = $service;
     }
 
     /**
@@ -283,6 +280,13 @@ class Application extends BaseApplication
             new ShowFriendCommand(),
             new ChatCommand(),
         ]);
+    }
+
+    protected function getDefaultServices()
+    {
+        return [
+            new MessageService(),
+        ];
     }
 
     /**
