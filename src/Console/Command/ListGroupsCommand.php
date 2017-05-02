@@ -33,7 +33,7 @@ class ListGroupsCommand extends Command
                     || in_array($group->getMarkName(), $names);
             });
         }
-        $panel = $this->getClient()->createPanel(GroupsPanel::class, [$groups, []]);
+        $panel = new GroupsPanel($groups);
         $panel->render();
     }
 }

@@ -33,7 +33,7 @@ class ListDiscussesCommand extends Command
                 return in_array($discuss->getName(), $names);
             });
         }
-        $panel = $this->getClient()->createPanel(DiscussesPanel::class, [$discusses]);
+        $panel = new DiscussesPanel($discusses);
         $panel->render();
     }
 }

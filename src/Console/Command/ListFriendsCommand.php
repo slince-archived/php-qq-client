@@ -41,7 +41,7 @@ class ListFriendsCommand extends Command
                     || in_array($friend->getMarkName(), $names);
             });
         }
-        $panel = $this->getClient()->createPanel(FriendsPanel::class, [$friends]);
+        $panel = new FriendsPanel($friends);
         $panel->render();
     }
 }

@@ -11,15 +11,20 @@ namespace Slince\PHPQQClient\Console\Command;
 use Slince\Event\SubscriberInterface;
 use Slince\PHPQQClient\Console\Service\MessageService;
 use Slince\PHPQQClient\Constants;
+use Slince\PHPQQClient\Event\ReceivedDiscussMessageEvent;
+use Slince\PHPQQClient\Event\ReceivedGroupMessageEvent;
 use Slince\PHPQQClient\Event\ReceivedMessageEvent;
+use Slince\PHPQQClient\History\DiscussHistory;
+use Slince\PHPQQClient\History\GroupHistory;
+use Slince\PHPQQClient\History\History;
 
 class MessageSubscriber implements SubscriberInterface
 {
-    protected $notificationService;
+    protected $messageService;
 
-    public function __construct(MessageService $notificationService)
+    public function __construct(MessageService $messageService)
     {
-        $this->notificationService = $notificationService;
+        $this->messageService = $messageService;
     }
 
     /**
@@ -34,8 +39,27 @@ class MessageSubscriber implements SubscriberInterface
         ];
     }
 
-    public function onReceiveMessage(ReceivedMessageEvent $event)
+    public function onReceiveGroupMessage(ReceivedMessageEvent $event)
     {
+        $this->messageService->addHistory(new History(time(),
+            $event->getMessage(),
+            $event->getSender()
+        ));
+    }
 
+    public function onReceiveDiscussMessage(ReceivedDiscussMessageEvent $event)
+    {
+        $this->messageService->addHistory(new DiscussHistory(time(),
+            $event->getMessage(),
+            $event->getSender()
+        ));
+    }
+
+    public function onReceiveMessage(ReceivedGroupMessageEvent $event)
+    {
+        $this->messageService->addHistory(new GroupHistory(time(),
+            $event->getMessage(),
+            $event->getSender()
+        ));
     }
 }

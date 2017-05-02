@@ -36,7 +36,7 @@ class ShowCategoriesCommand extends Command
         })->sortBy(function(Category $category){
             return $category->getSort();
         }, SORT_ASC);
-        $panel = $this->getClient()->createPanel(CategoriesPanel::class, [$categories]);
+        $panel = new CategoriesPanel($categories);
         $panel->render();
     }
 }

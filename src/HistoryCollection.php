@@ -12,7 +12,7 @@ use Slince\PHPQQClient\History\HistoryInterface;
 
 class HistoryCollection extends Collection
 {
-    public function __construct(array $histories)
+    public function __construct(array $histories = [])
     {
         parent::__construct($histories);
     }

@@ -33,7 +33,7 @@ class ShowFriendCommand extends Command
             throw new InvalidArgumentException(sprintf("没有发现好友[%s]", $markName));
         }
         $profile = $this->getClient()->getFriendDetail($friend);
-        $panel = $this->getClient()->createPanel(ProfilePanel::class, [$profile]);
+        $panel = new ProfilePanel($profile);
         $panel->render();
     }
 }

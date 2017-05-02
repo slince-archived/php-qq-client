@@ -21,7 +21,7 @@ class ShowMeCommand extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $profile = $this->getClient()->getCurrentUserProfile();
-        $panel = $this->getClient()->createPanel(ProfilePanel::class, [$profile]);
+        $panel = new ProfilePanel($profile);
         $panel->render();
     }
 }

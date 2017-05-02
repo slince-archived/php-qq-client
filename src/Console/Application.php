@@ -86,12 +86,6 @@ class Application extends BaseApplication
      */
     protected $logger;
 
-    /**
-     * 所有panel
-     * @var Panel[]
-     */
-    protected $panels = [];
-
     public function __construct(Configuration $configuration)
     {
         parent::__construct(static::NAME);
@@ -135,7 +129,6 @@ class Application extends BaseApplication
     {
         $panel = $this->container->get($panelClass, $arguments);
         $panel->setStyle($this->style);
-        $this->panels[] = $panel;
         return $panel;
     }
 
@@ -153,6 +146,11 @@ class Application extends BaseApplication
     public function getOutput()
     {
         return $this->output;
+    }
+
+    public function registerService()
+    {
+
     }
 
     /**
