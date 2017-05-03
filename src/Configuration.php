@@ -14,6 +14,11 @@ class Configuration
      */
     protected $configs = [];
 
+    /**
+     * @var string
+     */
+    protected $basePath;
+
     public function __construct($configs = [])
     {
         $this->configs = array_merge($this->getDefaultConfigs(), $configs);
@@ -86,5 +91,15 @@ class Configuration
         $configuration = new static();
         $configuration->readConfigFile($file);
         return $configuration;
+    }
+
+    public function getBasePath()
+    {
+        if (empty($this->basePath)) {
+            $reflection = new \ReflectionObject($this);
+            $path = $reflection->getFileName();
+            $this->basePath = dirname(dirname($path));
+        }
+        return $this->basePath;
     }
 }

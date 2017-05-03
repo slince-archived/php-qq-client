@@ -3,11 +3,11 @@
  * PHP QQ Client Library
  * @author Tao <taosikai@yeah.net>
  */
-namespace Slince\PHPQQClient\Console\Command;
+namespace Slince\PHPQQClient\Console\Service;
 
 interface ServiceInterface
 {
-    public function process();
+    public function run();
 
     public function getName();
 }

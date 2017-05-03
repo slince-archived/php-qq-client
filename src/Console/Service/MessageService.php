@@ -5,8 +5,7 @@
  */
 namespace Slince\PHPQQClient\Console\Service;
 
-use Slince\PHPQQClient\Console\Command\MessageSubscriber;
-use Slince\PHPQQClient\Console\Command\Service;
+use Slince\PHPQQClient\Client;
 use Slince\PHPQQClient\History\History;
 use Slince\PHPQQClient\HistoryCollection;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,11 +18,22 @@ class MessageService extends Service
      */
     protected $historyCollection;
 
-    public function __construct()
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
     {
-        parent::__construct('message-service');
+        return 'listen-message';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initialize()
+    {
         $this->historyCollection = new HistoryCollection();
     }
+
 
     /**
      * Adds a history to collection
@@ -34,7 +44,7 @@ class MessageService extends Service
         $this->historyCollection->push($history);
     }
 
-    public function process()
+    public function run()
     {
         $client = $this->getClient();
         $client->getDispatcher()->addSubscriber(new MessageSubscriber($this));

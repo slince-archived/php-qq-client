@@ -3,10 +3,9 @@
  * PHP QQ Client Library
  * @author Tao <taosikai@yeah.net>
  */
-namespace Slince\PHPQQClient\Console\Command;
+namespace Slince\PHPQQClient\Console\Service;
 
 use Slince\Event\SubscriberInterface;
-use Slince\PHPQQClient\Console\Service\MessageService;
 use Slince\PHPQQClient\Constants;
 use Slince\PHPQQClient\Event\ReceivedDiscussMessageEvent;
 use Slince\PHPQQClient\Event\ReceivedGroupMessageEvent;

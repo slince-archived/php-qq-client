@@ -3,30 +3,25 @@
  * PHP QQ Client Library
  * @author Tao <taosikai@yeah.net>
  */
-namespace Slince\PHPQQClient\Console\Command;
+namespace Slince\PHPQQClient\Console\Service;
 
 use Slince\PHPQQClient\Client;
-use Slince\PHPQQClient\Exception\LogicException;
-use Symfony\Component\Console\Command\Command as BaseCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
-abstract class Service extends BaseCommand implements ServiceInterface
+abstract class Service implements ServiceInterface
 {
     /**
-     * @return InputInterface
+     * @var Client
      */
-    public function getInput()
+    protected $client;
+
+    public function __construct(Client $client = null)
     {
-        return $this->getClient()->getInput();
+        $this->client = $client;
+        $this->initialize();
     }
 
-    /**
-     * @return OutputInterface
-     */
-    public function getOutput()
+    public function initialize()
     {
-        return $this->getClient()->getOutput();
     }
 
     /**
@@ -35,20 +30,19 @@ abstract class Service extends BaseCommand implements ServiceInterface
      */
     public function getClient()
     {
-        $application = $this->getApplication();
-        if (is_null($application)) {
-            throw new LogicException("You should set a application for the command");
-        }
-        return $application;
+        return $this->client;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    /**
+     * @param Client $client
+     */
+    public function setClient($client)
     {
-        $this->process();
+        $this->client = $client;
     }
 
     /**
      * 运行服务
      */
-    abstract public function process();
+    abstract public function run();
 }
