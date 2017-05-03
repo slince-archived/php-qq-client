@@ -24,9 +24,7 @@ use Slince\SmartQQ\Exception\Code103ResponseException;
 use Slince\SmartQQ\Exception\ResponseException;
 use Slince\SmartQQ\Message\Request\Message;
 use Slince\SmartQQ\Message\Response\Message as ResponseMessage;
-use Slince\SmartQQ\Message\Response\FriendMessage;
-use Slince\SmartQQ\Message\Response\GroupMessage;
-use Slince\SmartQQ\Message\Response\DiscussMessage;
+
 
 class Client extends Application
 {
@@ -214,34 +212,10 @@ class Client extends Application
         if (!is_null($subscriber)) {
             $this->dispatcher->addSubscriber($subscriber);
         }
-        //预先获取三组信息，防止获取消息时阻塞过长
-        $friends = $this->getFriends();
-        $groups = $this->getGroups();
-        $discusses = $this->getDiscusses();
         //轮询消息
         $messages = $this->wrapRequest(function(){
             $this->smartQQ->pollMessages();
         });
-        foreach ($messages as $message) {
-            if ($message instanceof FriendMessage) {
-                $friend = $friends->firstByAttribute('uin', $message->getFromUin());
-                $event = new ReceivedMessageEvent($message, $friend, $this);
-            } elseif ($message instanceof GroupMessage) {
-                $group = $groups->firstByAttribute('id', $message->getFromUin());
-                $groupMember = $this->getGroupsDetail($group)->getMembers()
-                    ->firstByAttribute('uin', $message->getSendUin());
-                $event = new ReceivedGroupMessageEvent($message, $group, $groupMember, $this);
-            } elseif ($message instanceof DiscussMessage) {
-                $discuss = $discusses->firstByAttribute('id', $message->getFromUin());
-                $discussMember = $this->getDiscussDetails($discuss)->getMembers()
-                    ->firstByAttribute('uin', $message->getSendUin());
-                $event = new ReceivedDiscussMessageEvent($message, $discuss, $discussMember, $this);
-            } else {
-                //其它类型消息暂时不支持
-                continue;
-            }
-            $this->dispatcher->dispatch($event->getName(), $event);
-        }
         return $messages;
     }
 

@@ -7,7 +7,7 @@ namespace Slince\PHPQQClient\Console\Service;
 
 interface ServiceInterface
 {
-    public function run();
+    public function run($callback = null);
 
     public function getName();
 }

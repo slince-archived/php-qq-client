@@ -40,9 +40,4 @@ abstract class Service implements ServiceInterface
     {
         $this->client = $client;
     }
-
-    /**
-     * 运行服务
-     */
-    abstract public function run();
 }

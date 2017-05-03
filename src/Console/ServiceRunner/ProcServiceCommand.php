@@ -6,7 +6,9 @@
 namespace Slince\PHPQQClient\Console\ServiceRunner;
 
 use Slince\PHPQQClient\Console\Command\Command;
-use Slince\PHPQQClient\Console\ServiceInterface;
+use Slince\PHPQQClient\Console\Service\ServiceInterface;
+use Slince\PHPQQClient\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -17,14 +19,21 @@ class ProcServiceCommand extends Command
      */
     protected $service;
 
-    public function __construct(ServiceInterface $service)
+    public function configure()
     {
-        $this->service = $service;
-        parent::__construct(null);
+        $this->setName('service-run')
+            ->addArgument('serviceName', InputArgument::REQUIRED, '需要启动的服务名称');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $data = $this->service->run();
+        $serviceName = $input->getArgument('serviceName');
+        $service = $this->getClient()->getService($serviceName);
+        if (!$service) {
+            throw new InvalidArgumentException('没有发现该服务');
+        }
+        $service->run(function($data) use ($output){
+            $output->write(json_encode($data));
+        });
     }
 }

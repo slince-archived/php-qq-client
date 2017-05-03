@@ -12,8 +12,6 @@ use Slince\PHPQQClient\Console\Command\BootstrapCommand;
 use Slince\PHPQQClient\Console\Command\ChatCommand;
 use Slince\PHPQQClient\Console\Command\ListDiscussMembersCommand;
 use Slince\PHPQQClient\Console\Command\ListGroupMembersCommand;
-use Slince\PHPQQClient\Console\Command\Service;
-use Slince\PHPQQClient\Console\Command\ServiceInterface;
 use Slince\PHPQQClient\Console\Command\ShowCategoriesCommand;
 use Slince\PHPQQClient\Console\Command\ListDiscussesCommand;
 use Slince\PHPQQClient\Console\Command\ShowFriendCommand;
@@ -22,6 +20,7 @@ use Slince\PHPQQClient\Console\Command\ListGroupsCommand;
 use Slince\PHPQQClient\Console\Command\ShowMeCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Console\Service\MessageService;
+use Slince\PHPQQClient\Console\Service\ServiceInterface;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
@@ -91,7 +90,7 @@ class Application extends BaseApplication
 
     /**
      * backend services
-     * @var array
+     * @var ServiceInterface[]
      */
     protected $services = [];
 
@@ -187,6 +186,22 @@ class Application extends BaseApplication
         $rawInput = str_replace('\\', '\\\\', rtrim($rawInput, " \t\n\r\0\x0B;"));
         return $rawInput;
     }
+
+    /**
+     * 获取服务
+     * @param $name
+     * @return bool|ServiceInterface
+     */
+    public function getService($name)
+    {
+        foreach ($this->services as $service) {
+            if ($service->getName() == trim($name)) {
+                return $service;
+            }
+        }
+        return false;
+    }
+
     /**
      * {@inheritdoc}
      */
