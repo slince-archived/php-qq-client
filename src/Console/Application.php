@@ -21,6 +21,7 @@ use Slince\PHPQQClient\Console\Command\ShowMeCommand;
 use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Console\Service\MessageService;
 use Slince\PHPQQClient\Console\Service\ServiceInterface;
+use Slince\PHPQQClient\Console\ServiceRunner\ProcServiceCommand;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
@@ -102,6 +103,9 @@ class Application extends BaseApplication
         $this->loop = new Loop();
         $this->dispatcher = new Dispatcher();
         $this->container = new Container();
+        foreach ($this->getDefaultServices() as $service) {
+            $this->registerService($service);
+        }
     }
 
     /**
@@ -146,6 +150,7 @@ class Application extends BaseApplication
 
     public function registerService(ServiceInterface $service)
     {
+        $service->setClient($this);
         $this->services[$service->getName()] = $service;
     }
 
@@ -157,20 +162,6 @@ class Application extends BaseApplication
         $input = $input ?: new ArgvInput();
         $input->setStream(fopen('php://stdin', 'r') ?: STDIN);
         return parent::run($input, $output);
-    }
-
-    protected function doCommandDispatch($stream)
-    {
-        $rawInput = fread($stream, 4096);
-        $rawInput = str_replace('\\', '\\\\', rtrim($rawInput, " \t\n\r\0\x0B;"));
-        $input = new StringInput($rawInput);
-        try {
-            $command = $this->findCommand($input);
-            return $this->runCommand($command, $input, $this->output);
-        } catch (CommandNotFoundException $exception) {
-            $this->logger->error($exception->getMessage());
-            return false;
-        }
     }
 
     /**
@@ -214,7 +205,6 @@ class Application extends BaseApplication
         $this->output = $output;
         $this->writeLogo();
         parent::doRun($input, $output);
-        $inputStream = $input->getStream();
         $this->loop->run(function() {
             $rawInput = $this->readLine();
             $input = new StringInput($rawInput);
@@ -294,13 +284,18 @@ class Application extends BaseApplication
             new ShowMeCommand(),
             new ShowFriendCommand(),
             new ChatCommand(),
+            new ProcServiceCommand()
         ]);
     }
 
+    /**
+     * 获取服务
+     * @return array
+     */
     protected function getDefaultServices()
     {
         return [
-            new MessageService(),
+            new MessageService($this),
         ];
     }
 

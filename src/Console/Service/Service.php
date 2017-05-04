@@ -34,9 +34,9 @@ abstract class Service implements ServiceInterface
     }
 
     /**
-     * @param Client $client
+     * {@inheritdoc}
      */
-    public function setClient($client)
+    public function setClient(Client $client)
     {
         $this->client = $client;
     }

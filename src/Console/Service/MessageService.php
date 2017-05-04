@@ -49,8 +49,6 @@ class MessageService extends Service
     public function run($callback = null)
     {
         $client = $this->getClient();
-        //绑定事件
-        $client->getDispatcher()->addSubscriber(new MessageSubscriber($this));
         //预先获取三组信息，防止获取消息时阻塞过长
         $friends = $client->getFriends();
         $groups = $client->getGroups();

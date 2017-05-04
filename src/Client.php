@@ -80,10 +80,8 @@ class Client extends Application
         if (isset($this->data['friends'])) {
             return $this->data['friends'];
         }
-        $this->data['friends'] = $this->cache->read(Constants::CACHE_FRIENDS, function(){
-            return $this->wrapRequest(function(){
-                return $this->smartQQ->getFriends();
-            });
+        $this->data['friends'] = $this->wrapRequest(function(){
+            return $this->smartQQ->getFriends();
         });
         return $this->data['friends'];
     }
@@ -97,10 +95,8 @@ class Client extends Application
         if (isset($this->data['groups'])) {
             return $this->data['groups'];
         }
-        $this->data['groups'] = $this->cache->read(Constants::CACHE_GROUPS, function(){
-            return $this->wrapRequest(function(){
-                return $this->smartQQ->getGroups();
-            });
+        $this->data['groups'] = $this->wrapRequest(function(){
+            return $this->smartQQ->getGroups();
         });
         return $this->data['groups'];
     }
@@ -110,10 +106,8 @@ class Client extends Application
         if (isset($this->data['discusses'])) {
             return $this->data['discusses'];
         }
-        $this->data['discusses'] = $this->cache->read(Constants::CACHE_DISCUSSES, function(){
-            return $this->wrapRequest(function(){
-                return $this->smartQQ->getDiscusses();
-            });
+        $this->data['discusses'] = $this->wrapRequest(function(){
+            return $this->smartQQ->getDiscusses();
         });
         return $this->data['discusses'];
     }
@@ -214,7 +208,7 @@ class Client extends Application
         }
         //轮询消息
         $messages = $this->wrapRequest(function(){
-            $this->smartQQ->pollMessages();
+            return $this->smartQQ->pollMessages();
         });
         return $messages;
     }
