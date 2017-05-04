@@ -210,14 +210,23 @@ class Application extends BaseApplication
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->style = new Style($input, $output);
+        Panel::setStyle($this->style);
         $this->logger = new Logger($output);
         $this->input = $input;
         $this->output = $output;
-        $streams = $this->runService();
-        Panel::setStyle($this->style);
-        $this->writeLogo();
+        $streams = [];
+        if ($this->configuration->isDisableService()) {
+            $streams = $this->runService();
+        }
+        $streams[] = $input->getStream();
         parent::doRun($input, $output);
-        $this->loop->run(function() {
+        $this->loop->run(function() use (&$streams){
+            $write = [];
+            $except = [];
+            if (stream_select($streams, $write, $except, )) {
+
+            }
+
             $rawInput = $this->readLine();
             $input = new StringInput($rawInput);
             try {

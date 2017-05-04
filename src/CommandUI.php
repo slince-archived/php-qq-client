@@ -21,6 +21,9 @@ class CommandUI
         } else {
             $configuration = new Configuration();
         }
+        if (true === $input->hasParameterOption(array('--disable-service'), true)) {
+            $configuration->setDisableService(true);
+        }
         $application = new Client($configuration);
         $application->setAutoExit(true);
         $application->run($input);

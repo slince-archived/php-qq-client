@@ -22,6 +22,8 @@ class Configuration
      */
     protected $basePath;
 
+    protected $disableService = false;
+
     public function __construct($configs = [])
     {
         $this->configs = array_merge($this->getDefaultConfigs(), $configs);
@@ -35,7 +37,7 @@ class Configuration
     {
         return [
             'loginImage' => getcwd() . '/_login.png',
-            'prompt' => 'PHPQQ: '
+            'prompt' => 'PHPQQ: ',
         ];
     }
 
@@ -85,18 +87,6 @@ class Configuration
     }
 
     /**
-     * 根据配置文件创建
-     * @param string $file
-     * @return Configuration
-     */
-    public static function fromConfigFile($file)
-    {
-        $configuration = new static();
-        $configuration->readConfigFile($file);
-        return $configuration;
-    }
-
-    /**
      * 获取项目根目录
      * @return string
      */
@@ -123,5 +113,33 @@ class Configuration
             $runner = new ProcServiceRunner($client);
         }
         return $runner;
+    }
+
+    /**
+     * @param bool $disableService
+     */
+    public function setDisableService($disableService)
+    {
+        $this->disableService = $disableService;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisableService()
+    {
+        return $this->disableService;
+    }
+
+    /**
+     * 根据配置文件创建
+     * @param string $file
+     * @return Configuration
+     */
+    public static function fromConfigFile($file)
+    {
+        $configuration = new static();
+        $configuration->readConfigFile($file);
+        return $configuration;
     }
 }
