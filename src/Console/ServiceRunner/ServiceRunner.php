@@ -6,7 +6,7 @@
 namespace Slince\PHPQQClient\Console\ServiceRunner;
 
 use Slince\PHPQQClient\Client;
-use Slince\PHPQQClient\Console\ServiceInterface;
+use Slince\PHPQQClient\Console\Service\ServiceInterface;
 
 abstract class ServiceRunner implements ServiceRunnerInterface
 {
@@ -14,6 +14,27 @@ abstract class ServiceRunner implements ServiceRunnerInterface
      * @var ServiceInterface[]
      */
     protected $services;
+
+    /**
+     * @var Client
+     */
+    protected $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
+    /**
+     * 添加多个服务到服务执行器
+     * @param array $services
+     */
+    public function pushMany(array $services)
+    {
+        foreach ($services as $service) {
+            $this->push($service);
+        }
+    }
 
     /**
      * {@inheritdoc}
@@ -36,6 +57,6 @@ abstract class ServiceRunner implements ServiceRunnerInterface
      */
     public function getClient()
     {
-
+        return $this->client;
     }
 }

@@ -6,6 +6,9 @@
 namespace Slince\PHPQQClient;
 
 use Slince\Cache\FileCache;
+use Slince\PHPQQClient\Console\ServiceRunner\PcntlServiceRunner;
+use Slince\PHPQQClient\Console\ServiceRunner\ProcServiceRunner;
+use Slince\PHPQQClient\Console\ServiceRunner\ServiceRunner;
 
 class Configuration
 {
@@ -93,6 +96,10 @@ class Configuration
         return $configuration;
     }
 
+    /**
+     * 获取项目根目录
+     * @return string
+     */
     public function getBasePath()
     {
         if (empty($this->basePath)) {
@@ -101,5 +108,20 @@ class Configuration
             $this->basePath = dirname(dirname($path));
         }
         return $this->basePath;
+    }
+
+    /**
+     * 获取服务执行容器
+     * @param Client $client
+     * @return ServiceRunner
+     */
+    public function getServiceRunner(Client $client = null)
+    {
+        if (function_exists('pcntl_fork') && function_exists('posix_mkfifo')) {
+            $runner = new PcntlServiceRunner($client);
+        } else {
+            $runner = new ProcServiceRunner($client);
+        }
+        return $runner;
     }
 }

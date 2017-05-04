@@ -5,7 +5,7 @@
  */
 namespace Slince\PHPQQClient\Console\ServiceRunner;
 
-use Slince\PHPQQClient\Console\ServiceInterface;
+use Slince\PHPQQClient\Console\Service\ServiceInterface;
 
 interface ServiceRunnerInterface
 {

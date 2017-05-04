@@ -198,19 +198,14 @@ class Client extends Application
 
     /**
      * 监听消息
-     * @param SubscriberInterface|null $subscriber
      * @return ResponseMessage[]
      */
-    public function polling(SubscriberInterface $subscriber = null)
+    public function polling()
     {
-        if (!is_null($subscriber)) {
-            $this->dispatcher->addSubscriber($subscriber);
-        }
         //轮询消息
-        $messages = $this->wrapRequest(function(){
+        return $this->wrapRequest(function(){
             return $this->smartQQ->pollMessages();
         });
-        return $messages;
     }
 
     /**

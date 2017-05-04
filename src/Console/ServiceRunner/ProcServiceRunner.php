@@ -5,7 +5,7 @@
  */
 namespace Slince\PHPQQClient\Console\ServiceRunner;
 
-use Slince\PHPQQClient\Console\ServiceInterface;
+use Slince\PHPQQClient\Console\Service\ServiceInterface;
 use Slince\PHPQQClient\Exception\RuntimeException;
 
 class ProcServiceRunner extends ServiceRunner
@@ -43,7 +43,8 @@ class ProcServiceRunner extends ServiceRunner
         $descriptorspec = array(
             0 => array("pipe", "r"),
             1 => array("pipe", "w"),
-            2 => array("file", "/tmp/error-output.txt", "a") // 标准错误，写入到一个文件
+            2 => STDERR // 标准错误，写入到一个文件
+//            2 => array("file", "/tmp/error-output.txt", "a") // 标准错误，写入到一个文件
         );
         $process = proc_open($command, $descriptorspec, $pipes,
             $this->getClient()->getConfiguration()->getBasePath());

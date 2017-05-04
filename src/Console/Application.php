@@ -22,6 +22,7 @@ use Slince\PHPQQClient\Console\Panel\Panel;
 use Slince\PHPQQClient\Console\Service\MessageService;
 use Slince\PHPQQClient\Console\Service\ServiceInterface;
 use Slince\PHPQQClient\Console\ServiceRunner\ProcServiceCommand;
+use Slince\PHPQQClient\Console\ServiceRunner\ServiceRunner;
 use Slince\PHPQQClient\Loop;
 use Symfony\Component\Console\Application as BaseApplication;
 use Slince\PHPQQClient\Client;
@@ -90,6 +91,11 @@ class Application extends BaseApplication
     protected $logger;
 
     /**
+     * @var ServiceRunner
+     */
+    protected $serviceRunner;
+
+    /**
      * backend services
      * @var ServiceInterface[]
      */
@@ -106,6 +112,7 @@ class Application extends BaseApplication
         foreach ($this->getDefaultServices() as $service) {
             $this->registerService($service);
         }
+        $this->serviceRunner = $this->configuration->getServiceRunner($this);
     }
 
     /**
@@ -148,6 +155,10 @@ class Application extends BaseApplication
         return $this->output;
     }
 
+    /**
+     * 注册一个后台服务
+     * @param ServiceInterface $service
+     */
     public function registerService(ServiceInterface $service)
     {
         $service->setClient($this);
@@ -199,10 +210,11 @@ class Application extends BaseApplication
     public function doRun(InputInterface $input, OutputInterface $output)
     {
         $this->style = new Style($input, $output);
-        Panel::setStyle($this->style);
         $this->logger = new Logger($output);
         $this->input = $input;
         $this->output = $output;
+        $streams = $this->runService();
+        Panel::setStyle($this->style);
         $this->writeLogo();
         parent::doRun($input, $output);
         $this->loop->run(function() {
@@ -216,6 +228,17 @@ class Application extends BaseApplication
                 return false;
             }
         });
+    }
+
+    /**
+     * 执行后台服务
+     * @return array
+     */
+    protected function runService()
+    {
+        $this->serviceRunner->pushMany($this->services);
+        $this->serviceRunner->run();
+        return $this->serviceRunner->getReadStreams();
     }
 
     protected function writeLogo()

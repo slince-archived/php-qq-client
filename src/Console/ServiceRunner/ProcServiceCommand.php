@@ -33,7 +33,7 @@ class ProcServiceCommand extends Command
             throw new InvalidArgumentException('没有发现该服务');
         }
         $service->run(function($data) use ($output){
-            $output->write(json_encode($data));
+            $output->write(serialize($data));
         });
     }
 }
