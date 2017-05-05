@@ -36,7 +36,7 @@ use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
 
-class Application extends BaseApplication
+abstract class Application extends BaseApplication
 {
     /**
      * Application Name
@@ -104,7 +104,7 @@ class Application extends BaseApplication
     public function __construct(Configuration $configuration)
     {
         parent::__construct(static::NAME);
-        $this->setDefaultCommand('bootstrap');
+//        $this->setDefaultCommand('bootstrap');
         $this->configuration = $configuration;
         $this->loop = new Loop();
         $this->dispatcher = new Dispatcher();
@@ -214,19 +214,38 @@ class Application extends BaseApplication
         $this->logger = new Logger($output);
         $this->input = $input;
         $this->output = $output;
-        $streams = [];
-        if ($this->configuration->isDisableService()) {
-            $streams = $this->runService();
+        $this->waitForCredential(); //等待授权
+        $commandName = $input->getFirstArgument();
+        if ($commandName) {
+            parent::doRun($input, $output);
+        } else {
+            $this->doRunInteractiveCommand();
         }
-        $streams[] = $input->getStream();
-        parent::doRun($input, $output);
+    }
+
+    protected function waitForCredential()
+    {
+//        $this->logger->error('等待扫码...');
+        $this->login();
+    }
+
+    abstract public function login();
+
+    protected function doRunInteractiveCommand()
+    {
+//        $streams = $this->runService();
+        $streams[] = $this->getInput()->getStream();
         $this->loop->run(function() use (&$streams){
+            $read = array_values($streams);
             $write = [];
             $except = [];
-            if (stream_select($streams, $write, $except, )) {
-
+            if (stream_select($read, $write, $except, null) > 0) {
+                var_dump($read);
+//                foreach ($read as $stream) {
+//                    echo stream_get_contents($stream);
+//                }
             }
-
+            return;
             $rawInput = $this->readLine();
             $input = new StringInput($rawInput);
             try {
@@ -338,6 +357,7 @@ class Application extends BaseApplication
     {
         $definition = parent::getDefaultInputDefinition();
         $definition->addOption(new InputOption('config', 'c', InputOption::VALUE_OPTIONAL, '配置文件'));
+        $definition->addOption(new InputOption('disable-service', null, InputOption::VALUE_OPTIONAL, '禁止启动服务'));
         return $definition;
     }
 }

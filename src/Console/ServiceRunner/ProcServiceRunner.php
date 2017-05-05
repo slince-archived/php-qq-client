@@ -39,7 +39,7 @@ class ProcServiceRunner extends ServiceRunner
      */
     protected function runService(ServiceInterface $service)
     {
-        $command = sprintf("php bin/phpqq service-run %s", $service->getName());
+        $command = sprintf("php bin/phpqq run-service %s --disable-service", $service->getName());
         $descriptorspec = array(
             0 => array("pipe", "r"),
             1 => array("pipe", "w"),
@@ -50,8 +50,9 @@ class ProcServiceRunner extends ServiceRunner
             $this->getClient()->getConfiguration()->getBasePath());
         if (is_resource($process)) {
             $this->streams[$service->getName()] = $pipes;
+        } else {
+            throw new RuntimeException(sprintf("服务%s无法启动", $service->getName()));
         }
-        throw new RuntimeException(sprintf("服务%s无法启动", $service->getName()));
     }
 
     /**

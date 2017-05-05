@@ -25,7 +25,6 @@ use Slince\SmartQQ\Exception\ResponseException;
 use Slince\SmartQQ\Message\Request\Message;
 use Slince\SmartQQ\Message\Response\Message as ResponseMessage;
 
-
 class Client extends Application
 {
     /**

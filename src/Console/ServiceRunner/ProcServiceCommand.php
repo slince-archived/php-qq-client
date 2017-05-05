@@ -21,7 +21,7 @@ class ProcServiceCommand extends Command
 
     public function configure()
     {
-        $this->setName('service-run')
+        $this->setName('run-service')
             ->addArgument('serviceName', InputArgument::REQUIRED, '需要启动的服务名称');
     }
 
